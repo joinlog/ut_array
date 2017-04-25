@@ -74,6 +74,7 @@ ts_del(UT_array_handle *ah_test)
 
 int main(int argc, char **argv)
 {
+  int i;
   int num = 0;
   // 0.initialize
   UT_array_handle *ah_test = NULL;
@@ -119,6 +120,35 @@ int main(int argc, char **argv)
   // 6.1check the result
   num = ut_array_num(ah_test);
   printf("ut_array_num=%d\n", num);
+  ts_iterator(ah_test);
+
+  printf("====================7.depth copy function test====================\n");
+  UT_array_handle *ah_test_tmp;
+  if (!ut_array_copy(&ah_test_tmp, ah_test) ) {
+    printf("[E] ut_array_copy fail\n");
+    return 1;
+  }
+  ts_iterator(ah_test_tmp);
+  ut_array_free(&ah_test_tmp);
+
+  printf("====================8.find function test====================\n");
+  test_t tt;
+  memset(&tt, 0, sizeof(test_t));
+  tt.i = 7;
+  test_t *ptt = (test_t *)ut_array_find(ah_test, (void *)&tt, cmp_func_test_i);
+  if (ptt == NULL) {
+    printf("[E] ut_array_find fail\n");
+  } else {
+    printf("ut_array_find %d success\n", tt.i);
+  }
+
+  printf("====================9.random access function test====================\n");
+  num = ut_array_num(ah_test);
+  for (i = 0; i < num; ++i) {
+    ptt = (test_t *)GET_ITEM_PTR(ah_test, i);
+    printf("[%d] i=%d c=%10c f=%.2f g=%.2f prt=%p\n", i, ptt->i, ptt->c, ptt->f, ptt->g, ptt->ptr);
+    ptt->i++;
+  }
   ts_iterator(ah_test);
 
   printf("====================0.match with ut_array_init=====================\n");
