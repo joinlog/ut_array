@@ -74,6 +74,10 @@ ut_array_free(UT_array_handle **ah)
     printf("E <%s> UT_array_handle==NULL fail", __FUNCTION__);
     return;
   }
+  if (*ah == NULL) {
+    printf("E <%s> UT_array_handle is already free", __FUNCTION__);
+    return;
+  }
   free((*ah)->pdata);
   free(*ah);
   *ah = NULL;
