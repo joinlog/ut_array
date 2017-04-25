@@ -30,26 +30,31 @@ typedef struct UT_array_handle {
   int cap_add_every_time;
   int nex;
   int bytes_per_item;
-  void *pdate;
+  void *pdata;
 }UT_array_handle;
 
 ////////////////////////////////////////////////////////////////////////////////
 #define UT_ARRAY_ITER(ah, idx, pitem)                                          \
-for((*(char**)(&(pitem)))=(char *)((ah)->pdate), (idx)=0;                     \
+for((*(char**)(&(pitem)))=(char *)((ah)->pdata), (idx)=0;                     \
     (idx) < (ah)->num;                                                         \
-    ++(idx), (*(char**)(&(pitem)))=(char *)((ah)->pdate+idx*(ah)->bytes_per_item) )
+    ++(idx), (*(char**)(&(pitem)))=(char *)((ah)->pdata+idx*(ah)->bytes_per_item) )
 
+#define GET_ITEM_PTR(ah, idx) ( ((idx) < 0 || (idx) >= (ah)->num) ? NULL : (void *)((char *)((ah)->pdata) + (idx) * (ah)->bytes_per_item) )
 
 UT_array_handle *
 ut_array_init(int bytes_per_item, int cap_add_every_time);
+bool
+ut_array_copy(UT_array_handle **dst, UT_array_handle *src);
 void
 ut_array_free(UT_array_handle **ah);
 bool
 ut_array_add(UT_array_handle *ah, void *pitem);
 void
 ut_array_sort(UT_array_handle *ah, int (*fun)(const void*, const void*));
+void *
+ut_array_find(UT_array_handle *ah, const void *pdst, int (*fun)(const void*, const void*));
 int
-ut_array_num(UT_array_handle *ah);
+ut_array_num(const UT_array_handle *ah);
 bool
 ut_array_num_set(UT_array_handle *ah, int num);
 bool
